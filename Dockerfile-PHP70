@@ -1,0 +1,19 @@
+FROM php:7.0-cli-alpine
+
+# Install
+RUN apk --no-cache update && apk --no-cache upgrade && apk add bash --no-cache
+
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+RUN php -r "if (hash_file('sha384', 'composer-setup.php') === 'e0012edf3e80b6978849f5eff0d4b4e4c79ff1609dd1e613307e16318854d24ae64f26d17af3ef0bf7cfb710ca74755a') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+RUN php composer-setup.php --filename=composer --install-dir=/usr/local/bin/
+RUN php -r "unlink('composer-setup.php');"
+
+# Clean up to make the image as small as possible
+RUN apk del --purge --force --no-cache linux-headers binutils-gold gnupg zlib-dev libc-utils && rm -rf /var/lib/apt/lists/* \
+    /var/cache/apk/* \
+    /usr/share/man \
+    /tmp/* \
+    /usr/lib/node_modules/npm/man \
+    /usr/lib/node_modules/npm/doc \
+    /usr/lib/node_modules/npm/html \
+    /usr/lib/node_modules/npm/scripts%

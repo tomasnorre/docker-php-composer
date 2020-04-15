@@ -1,0 +1,10 @@
+sudo: required
+dist: xenial
+
+services:
+  - docker
+
+script:
+  - docker build . -f Dockerfile-PHP70 -t tomasnorre/php70-composer
+  - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+  - docker push tomasnorre/php70-composer
